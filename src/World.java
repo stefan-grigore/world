@@ -1,44 +1,69 @@
-import components.implementations.Arm;
-import components.implementations.Leg;
-import components.implementations.LegArm;
-import fauna.implementations.Dog;
-import fauna.implementations.LeglessPerson;
-import fauna.implementations.Squirrel;
-import fauna.implementations.Stefan;
+import components.Component;
+import components.ComponentFactory;
+import interactive.Doer;
+
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class World {
-    public static void main(String[] args) {
-        final Squirrel squirrel = new Squirrel(
-                new LegArm(1, Squirrel.class),
-                new LegArm(2, Squirrel.class),
-                new Leg(1, Squirrel.class),
-                new Leg(2, Squirrel.class)
+    public static void main(final String[] args) {
+        final PrintStream printStream = System.out;
+        main(printStream);
+    }
+
+    static void main(final PrintStream printStream) {
+        final Component baseLegArm = ComponentFactory.createComponent("LegArm", 1, "",
+                new ArrayList<>(Arrays.asList("walk", "grab")),
+                new ArrayList<>(Arrays.asList("I'm walking here!", "I'm grabbing stuff!")),
+                printStream
         );
-        squirrel.walk();
-        squirrel.grab();
-        System.out.println();
-        final Dog dog = new Dog(
-                new Leg(1, Dog.class),
-                new Leg(2, Dog.class),
-                new Leg(3, Dog.class),
-                new Leg(4, Dog.class)
+        final Component baseLeg = ComponentFactory.createComponent("Leg", 1, "",
+                new ArrayList<>(List.of("walk")),
+                new ArrayList<>(List.of("I'm walking here!")),
+                printStream
         );
-        dog.walk();
-        System.out.println();
-        final LeglessPerson leglessPerson = new LeglessPerson(
-                new LegArm(1, LeglessPerson.class),
-                new LegArm(2, LeglessPerson.class)
+        final Component baseArm = ComponentFactory.createComponent("Arm", 1, "",
+                new ArrayList<>(List.of("grab")),
+                new ArrayList<>(List.of("I'm grabbing stuff!")),
+                printStream
         );
-        leglessPerson.walk();
-        leglessPerson.grab();
-        System.out.println();
-        final Stefan stefan = new Stefan(
-                new Arm(1, Stefan.class),
-                new Arm(2, Stefan.class),
-                new LegArm(1, Stefan.class),
-                new LegArm(2, Stefan.class)
-        );
-        stefan.walk();
-        stefan.grab();
+        String currentDoer = "Squirrel";
+        final Doer squirrel = new Doer(new ArrayList<>(List.of(
+                ComponentFactory.createComponent(baseLegArm, 1, currentDoer),
+                ComponentFactory.createComponent(baseLegArm, 2, currentDoer),
+                ComponentFactory.createComponent(baseLeg, 1, currentDoer),
+                ComponentFactory.createComponent(baseLeg, 2, currentDoer)
+        )), currentDoer, printStream);
+        squirrel.execute("walk");
+        squirrel.execute("grab");
+        printStream.println();
+        currentDoer = "Dog";
+        final Doer dog = new Doer(new ArrayList<>(List.of(
+                ComponentFactory.createComponent(baseLeg, 1, currentDoer),
+                ComponentFactory.createComponent(baseLeg, 2, currentDoer),
+                ComponentFactory.createComponent(baseLeg, 3, currentDoer),
+                ComponentFactory.createComponent(baseLeg, 4, currentDoer)
+        )), currentDoer, printStream);
+        dog.execute("walk");
+        printStream.println();
+        currentDoer = "LeglessPerson";
+        final Doer leglessPerson = new Doer(new ArrayList<>(List.of(
+                ComponentFactory.createComponent(baseLegArm, 1, currentDoer),
+                ComponentFactory.createComponent(baseLegArm, 2, currentDoer)
+        )), currentDoer, printStream);
+        leglessPerson.execute("walk");
+        leglessPerson.execute("grab");
+        printStream.println();
+        currentDoer = "Stefan";
+        final Doer stefan = new Doer(new ArrayList<>(List.of(
+                ComponentFactory.createComponent(baseArm, 1, currentDoer),
+                ComponentFactory.createComponent(baseArm, 2, currentDoer),
+                ComponentFactory.createComponent(baseLegArm, 1, currentDoer),
+                ComponentFactory.createComponent(baseLegArm, 2, currentDoer)
+        )), currentDoer, printStream);
+        stefan.execute("walk");
+        stefan.execute("grab");
     }
 }
